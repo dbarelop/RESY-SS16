@@ -10,3 +10,8 @@ Der Roboter wurde zusammengebaut und großteils verkabelt. Ebenso wurde eine [Ta
 
 # 30 März 2016
 Es wurden die Widerstände eingelötet und fertig verkabelt. 
+
+# 6 April 2016
+- Raspbian install into SD card
+- Static IP (192.168.2.2)
+- GPIO IN/OUT testing
