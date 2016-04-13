@@ -105,7 +105,7 @@ int main() {
         if (button_val == -1) {
             cleanup();
             return 1;
-        } else {
+        } else if (button_val) {
             printf("Button pressed, toggling blinking...\n");
             pthread_mutex_lock(&mutex);
             blink = !blink;
