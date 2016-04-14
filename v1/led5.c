@@ -96,10 +96,10 @@ int main() {
         return 1;
     }
 
-    // Check whether button is pressed (pool every 500 ms)
+    // Check whether button is pressed (poll every 500 ms)
     struct timespec request;
     request.tv_sec = 0;
-    request.tv_nsec = 500 * 1000;
+    request.tv_nsec = 500 * 1000000;
     while (1) {
         int button_val = gpio_read(BUTTON_PIN);
         if (button_val == -1) {
