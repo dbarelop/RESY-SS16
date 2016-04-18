@@ -4,7 +4,6 @@
  * source: Moderne Realzeitsysteme kompakt
  */
 
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/times.h>
@@ -51,19 +50,14 @@ typedef struct params {
 	char * filename;
 } params_t;
 
-
 void print_scheduling_parameter()
 {
 	struct timespec rr_time;
-
 	printf("Priority-Range SCHED_FF: %d - %d\n", sched_get_priority_min(SCHED_FIFO), sched_get_priority_max(SCHED_FIFO));
 	printf("Priority-Range SCHED_RR: %d - %d\n", sched_get_priority_min(SCHED_RR), sched_get_priority_max(SCHED_RR));
 	printf("Current Scheduling Policy: %s\n", Policies[sched_getscheduler(0)]);
-sched_rr_get_interval(0, &rr_time);
+sched_rr_get_interqval(0, &rr_time);
 	printf("Intervall for Policy RR: %ld [s] %ld[nanosec]\n", rr_time.tv_sec, rr_time.tv_nsec);
-
-
-
 }
 
 void sleep_function(void * arg)
@@ -88,8 +82,6 @@ void sleep_function(void * arg)
 	{
 		req.tv_nsec = (min+j*step)*1000;
 
-		//printf("Starting measurment with period[us]: %d f0r 100 loops:\n", req.tv_nsec/1000);
-		
 		for (i=0; i<100; i++)
 		{
 			clock_gettime(CLOCK_MONOTONIC, &start);
@@ -100,14 +92,11 @@ void sleep_function(void * arg)
 			clock_gettime(CLOCK_MONOTONIC, &end);
 			diff_time(start, end, &diff);
 			delay = (diff.tv_nsec-req.tv_nsec)/1000;
-			//printf("value:%ld usec, delay: %ld usec, raw_data: %ld\n", diff.tv_nsec/1000, delay, diff.tv_nsec);
 			if (delay > max_delay)
 			{
 				max_delay = delay;
 			}
 		}
-		//printf("Max: %ld usec\n", max_delay);
-		//printf("-------------------\n");
 		fprintf(fp, "%lu %lu\n", req.tv_nsec/1000, max_delay);
 		fprintf(stdout, "%lu %lu\n", req.tv_nsec/1000, max_delay);
 		max_delay = 0;
@@ -122,20 +111,17 @@ void sleep_function(void * arg)
 int
 main (int argc, char *argv[])
 {
-
 	int rtflag = 0;
 	int i,j;
 	params_t params;
 	pthread_t tid;
 	struct sched_param scheduling_parameter;
 
-
 	if (argc < 9)
 	{
 		printf("please give all arguments (-min -max -step -out)\n");		
 		return 0;
 	}
-
 
 	for(i = 1; i < argc; i++)
 	{	
@@ -163,7 +149,6 @@ main (int argc, char *argv[])
 		
 	}
 
-
 	if (rtflag == 0)
 	{
 		if (pthread_create(&tid, NULL, &sleep_function, &params))
@@ -175,7 +160,6 @@ main (int argc, char *argv[])
 		print_scheduling_parameter();
 		sched_getparam(0, &scheduling_parameter);
 		printf("Priority: %d\n", scheduling_parameter.sched_priority);
-
     }
 	else if (rtflag == 1)
 	{
@@ -195,12 +179,6 @@ main (int argc, char *argv[])
 		sched_getparam(0, &scheduling_parameter);
 		printf("Priority: %d\n", scheduling_parameter.sched_priority);
 	}
-		
-
-		
-	//printf("%ld %ld %ld %s \n", min, max, step, filename);
-
-
 	pthread_join(tid, NULL);
 	return 0;
 }
