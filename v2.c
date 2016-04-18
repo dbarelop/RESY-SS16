@@ -60,10 +60,32 @@ main (int argc, char *argv[])
 	for(i = 1; i < argc; i++)
 	{
 		printf("%s,\n", argv[i]);
+/*
+		if (strcmp("-min",argv[i]) == 0)
+		{
+			min = strtoul(argv[i+1]);
+			
+		}
+		else if (strcmp("-max",argv[i]) == 0)
+		{
+			max = strtoul(argv[i+1]);
+		}
+		else if (strcmp("-step",argv[i]) == 0)
+		{
+			step = strtoul(argv[i+1]);
+		}
+		else if (strcmp("-out",argv[i]) == 0)
+		{
+			filename = argv[i+1];
+		}
+		printf("%ld %ld %ld \n", min, max, step);
+*/
+
 
 
 	}
 
+return 0;
 	req.tv_sec = 0;
 	max_delay = 0;
 	double fors = (max-min) / step;
