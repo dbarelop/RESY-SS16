@@ -45,51 +45,39 @@ main (int argc, char *argv[])
 
 	char * filename;
 	unsigned long min, max, step;
+	struct timespec req, rem, start, end, diff;
+	int error;
+	long max_delay, delay;
+	int i,j;
 
 
-	int i;
 	if (argc < 9)
 	{
-		printf("please give all arguments (-min -max -step -out)");		
-		return -1;
+		printf("please give all arguments (-min -max -step -out)\n");		
+		return 0;
 	}
 
 	for(i = 1; i < argc; i++)
 	{
-		if (strcmp("-min",argv[i]) == 0)
-		{
-			min = strtoul(argv[i+1]);
-		}
-		else if (strcmp("-max",argv[i]) == 0)
-		{
-			max = strtoul(argv[i+1]);
-		}
-		else if (strcmp("-step",argv[i]) == 0)
-		{
-			step = strtoul(argv[i+1]);
-		}
-		else if (strcmp("-out",argv[i]) == 0)
-		{
-			filename = argv[i+1];
-		}
+		printf("%s,\n", argv[i]);
+
+
 	}
 
-
-
-	struct timespec req, rem, start, end, diff;
-	int error;
-	long max_delay, delay;
-
 	req.tv_sec = 0;
-	req.tv_nsec = 10000*1000;
 	max_delay = 0;
+	double fors = (max-min) / step;
+	//long fors = 3;
+//printf("%ld\n", fors);
+	
 
 	printf("Starting measurment with period[us]: 10000 f0r 100 loops:\n");
 
-	//for
-
+	for (j=0; j < fors; j++)
+	{
+		req.tv_nsec = min*1000+(j*step);
 		
-		for (i=0; i<1; i++)
+		for (i=0; i<10; i++)
 		{
 			clock_gettime(CLOCK_MONOTONIC, &start);
 			if ((error=clock_nanosleep(CLOCK_MONOTONIC, 0, &req, NULL))!=0)
@@ -105,6 +93,8 @@ main (int argc, char *argv[])
 				max_delay = delay;
 			}
 		}
+		printf("-------------------\n");
+	}
 
 		printf("Max: %ld usec\n", max_delay);
     
