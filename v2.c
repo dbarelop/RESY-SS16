@@ -48,6 +48,12 @@ main (int argc, char *argv[])
 
 
 	int i;
+	if (argc < 9)
+	{
+		printf("please give all arguments (-min -max -step -out)");		
+		return -1;
+	}
+
 	for(i = 1; i < argc; i++)
 	{
 		if (strcmp("-min",argv[i]) == 0)
