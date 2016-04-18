@@ -14,7 +14,7 @@
 #include <sched.h>
 
 #define NANOSECONDS_PER_SECOND 1000000000
-#define PRIORITY_OF_THIS_TASK 15
+#define PRIORITY_OF_THIS_TASK 1
 
 char * Policies[] = {
 	"SCHED_OTHER",
@@ -143,7 +143,6 @@ main (int argc, char *argv[])
 		if (strcmp("-min",argv[i]) == 0)
 		{
 			params.min = atol(argv[i+1]);
-			
 		}
 		else if (strcmp("-max",argv[i]) == 0)
 		{
