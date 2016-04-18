@@ -11,8 +11,16 @@
 #include <unistd.h>
 #include <time.h>
 #include <errno.h>
+#include <sched.h>
 
 #define NANOSECONDS_PER_SECOND 1000000000
+#define PRIORITY_OF_THIS_TASK 15
+
+char * Policies[] = {
+	"SCHED_OTHER",
+	"SCHED_FIFO",
+	"SCHED_RR"
+};	
 
 struct timespec * diff_time(struct timespec before, struct timespec after, struct timespec *result)
 {
@@ -43,6 +51,20 @@ typedef struct params {
 	char * filename;
 } params_t;
 
+
+void print_scheduling_parameter()
+{
+	struct timespec rr_time;
+
+	printf("Priority-Range SCHED_FF: %d - %d\n", sched_get_priority_min(SCHED_FIFO), sched_get_priority_max(SCHED_FIFO));
+	printf("Priority-Range SCHED_RR: %d - %d\n", sched_get_priority_min(SCHED_RR), sched_get_priority_max(SCHED_RR));
+	printf("Current Scheduling Policy: %s\n", Policies[sched_getscheduler(0)]);
+sched_rr_get_interval(0, &rr_time);
+	printf("Intervall for Policy RR: %ld [s] %ld[nanosec]\n", rr_time.tv_sec, rr_time.tv_nsec);
+
+
+
+}
 
 void sleep_function(void * arg)
 {
@@ -93,16 +115,6 @@ void sleep_function(void * arg)
 
 	fclose(fp);
 	exit(1);
-
-
-
-
-
-
-
-
-
-
 }
 
 
@@ -114,7 +126,8 @@ main (int argc, char *argv[])
 	int rtflag = 0;
 	int i,j;
 	params_t params;
-	pthread_t tid;	
+	pthread_t tid;
+	struct sched_param scheduling_parameter;
 
 
 	if (argc < 9)
@@ -144,7 +157,7 @@ main (int argc, char *argv[])
 		{
 			params.filename = argv[i+1];
 		}
-		else if (strcmp("-out",argv[i]) == 0)
+		else if (strcmp("-rt",argv[i]) == 0)
 		{
 			rtflag = 1;
 		}
@@ -159,10 +172,31 @@ main (int argc, char *argv[])
 		    fprintf(stderr, "Error creating thread\n");
 		    return 1;
 		}
-		printf("Thread started\n
+		printf("Thread started\n");
+		print_scheduling_parameter();
+		sched_getparam(0, &scheduling_parameter);
+		printf("Priority: %d\n", scheduling_parameter.sched_priority);
 
     }
-
+	else if (rtflag == 1)
+	{
+		scheduling_parameter.sched_priority = PRIORITY_OF_THIS_TASK;
+		if (sched_setscheduler(0, SCHED_RR, &scheduling_parameter) != 0)
+		{
+			fprintf(stderr, "Error Set Scheduling Prio\n");
+		    exit(-1);
+		}
+		if (pthread_create(&tid, NULL, &sleep_function, &params))
+		{
+		    fprintf(stderr, "Error creating thread\n");
+		    exit(-1);
+		}
+		printf("Thread started with Prio \n");
+		print_scheduling_parameter();
+		sched_getparam(0, &scheduling_parameter);
+		printf("Priority: %d\n", scheduling_parameter.sched_priority);
+	}
+		
 
 		
 	//printf("%ld %ld %ld %s \n", min, max, step, filename);
