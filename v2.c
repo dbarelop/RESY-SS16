@@ -40,7 +40,7 @@ struct timespec * diff_time(struct timespec before, struct timespec after, struc
 
 typedef struct params {
 	long min, max, step;
-	char filename;
+	char * filename;
 } params_t;
 
 
@@ -50,21 +50,16 @@ void sleep_function(void * arg)
 	long min = params.min;
 	long max = params.max;
 	long step = params.step;
+	int i,j,error;
 	char * filename = params.filename;
 	FILE * fp;
-
-
-
-
-
-
+	struct timespec req, start, end, diff;
+	long max_delay, delay;
 
 
 	req.tv_sec = 0;
 	max_delay = 0;
 	int fors = ((max-min) / step)+1;
-	//long fors = 3;
-//printf("%ld\n", fors);
 	
 	fp = fopen(filename, "w+");
 	for (j=0; j < fors; j++)
@@ -97,6 +92,7 @@ void sleep_function(void * arg)
 	}
 
 	fclose(fp);
+	exit(1);
 
 
 
@@ -115,14 +111,10 @@ int
 main (int argc, char *argv[])
 {
 
-	char * filename;
-	FILE * fp;
-	long min, max, step;
-	struct timespec req, rem, start, end, diff;
-	int error;
 	int rtflag = 0;
-	long max_delay, delay;
 	int i,j;
+	params_t params;
+	pthread_t tid;	
 
 
 	if (argc < 9)
@@ -137,20 +129,20 @@ main (int argc, char *argv[])
 
 		if (strcmp("-min",argv[i]) == 0)
 		{
-			min = atol(argv[i+1]);
+			params.min = atol(argv[i+1]);
 			
 		}
 		else if (strcmp("-max",argv[i]) == 0)
 		{
-			max = atol(argv[i+1]);
+			params.max = atol(argv[i+1]);
 		}
 		else if (strcmp("-step",argv[i]) == 0)
 		{
-			step = atol(argv[i+1]);
+			params.step = atol(argv[i+1]);
 		}
 		else if (strcmp("-out",argv[i]) == 0)
 		{
-			filename = argv[i+1];
+			params.filename = argv[i+1];
 		}
 		else if (strcmp("-out",argv[i]) == 0)
 		{
@@ -158,11 +150,24 @@ main (int argc, char *argv[])
 		}
 		
 	}
+
+
+	if (rtflag == 0)
+	{
+		if (pthread_create(&tid, NULL, &sleep_function, &params))
+		{
+		    fprintf(stderr, "Error creating thread\n");
+		    return 1;
+		}
+		printf("Thread started\n
+
+    }
+
+
+		
 	//printf("%ld %ld %ld %s \n", min, max, step, filename);
 
 
-	
-		
-    
-
+	pthread_join(tid, NULL);
+	return 0;
 }
