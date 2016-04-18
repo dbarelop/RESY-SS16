@@ -37,40 +37,70 @@ struct timespec * diff_time(struct timespec before, struct timespec after, struc
 	return result;
 }
 
+
+
 int
 main (int argc, char *argv[])
 {
 
-	struct timespec req, rem, start, end, diff;
-	int error;
-	long max, delay;
-
-	req.tv_sec = 0;
-	req.tv_nsec = 10000*1000;
-	max = 0;
-
-	printf("Starting measurment with period[us]: 10000 f0r 100 loops:\n");
+	char * filename;
+	unsigned long min, max, step;
 
 
 	int i;
-	for (i=0; i<100; i++) {
-		clock_gettime(CLOCK_MONOTONIC, &start);
-		if ((error=clock_nanosleep(CLOCK_MONOTONIC, 0, &req, NULL))!=0)
+	for(i = 1; i < argc; i++)
+	{
+		if (strcmp("-min",argv[i]) == 0)
 		{
-			printf("clock_nanosleep reporting error %d\n",error);
+			min = strtoul(argv[i+1]);
 		}
-		clock_gettime(CLOCK_MONOTONIC, &end);
-		diff_time(start, end, &diff);
-		delay = (diff.tv_nsec-req.tv_nsec)/1000;
-		printf("value:%ld usec, delay: %ld usec, raw_data: %ld\n", diff.tv_nsec/1000, delay, diff.tv_nsec);
-		if (delay > max)
+		else if (strcmp("-max",argv[i]) == 0)
 		{
-			max = diff.tv_nsec;
+			max = strtoul(argv[i+1]);
+		}
+		else if (strcmp("-step",argv[i]) == 0)
+		{
+			step = strtoul(argv[i+1]);
+		}
+		else if (strcmp("-out",argv[i]) == 0)
+		{
+			filename = argv[i+1];
 		}
 	}
 
-	printf("Max: %ld usec\n", max/1000);
+
+
+	struct timespec req, rem, start, end, diff;
+	int error;
+	long max_delay, delay;
+
+	req.tv_sec = 0;
+	req.tv_nsec = 10000*1000;
+	max_delay = 0;
+
+	printf("Starting measurment with period[us]: 10000 f0r 100 loops:\n");
+
+	//for
+
+		
+		for (i=0; i<1; i++)
+		{
+			clock_gettime(CLOCK_MONOTONIC, &start);
+			if ((error=clock_nanosleep(CLOCK_MONOTONIC, 0, &req, NULL))!=0)
+			{
+				printf("clock_nanosleep reporting error %d\n",error);
+			}
+			clock_gettime(CLOCK_MONOTONIC, &end);
+			diff_time(start, end, &diff);
+			delay = (diff.tv_nsec-req.tv_nsec)/1000;
+			printf("value:%ld usec, delay: %ld usec, raw_data: %ld\n", diff.tv_nsec/1000, delay, diff.tv_nsec);
+			if (delay > max_delay)
+			{
+				max_delay = delay;
+			}
+		}
+
+		printf("Max: %ld usec\n", max_delay);
     
 
 }
-
