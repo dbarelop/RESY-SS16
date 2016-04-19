@@ -56,7 +56,7 @@ void print_scheduling_parameter()
 	printf("Priority-Range SCHED_FF: %d - %d\n", sched_get_priority_min(SCHED_FIFO), sched_get_priority_max(SCHED_FIFO));
 	printf("Priority-Range SCHED_RR: %d - %d\n", sched_get_priority_min(SCHED_RR), sched_get_priority_max(SCHED_RR));
 	printf("Current Scheduling Policy: %s\n", Policies[sched_getscheduler(0)]);
-sched_rr_get_interqval(0, &rr_time);
+    sched_rr_get_interqval(0, &rr_time);
 	printf("Intervall for Policy RR: %ld [s] %ld[nanosec]\n", rr_time.tv_sec, rr_time.tv_nsec);
 }
 
