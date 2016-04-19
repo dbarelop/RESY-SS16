@@ -8,7 +8,8 @@
     *  Steuerung Motor
 * Der Notausbutton wird mit Interrupt umgesetzt
 * Als Scheduler wird EDF verwendet (Earliest Deadline First)
-## Rechnerkernauteilung:
+
+## Rechnerkernaufteilung:
 
 | Name | CPU Auslastung | Prozesszeit [ms] | Deadline |
 | --- |:---:|:---:| --- |
