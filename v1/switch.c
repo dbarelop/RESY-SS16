@@ -35,7 +35,7 @@ int main() {
         if (val == -1) {
             cleanup();
             return 1;
-        } else if (val != 0) {
+        } else if (val == 0) {
             printf("Button pressed; n = %d\n", ++n);
         }
         usleep(500 * 1000);

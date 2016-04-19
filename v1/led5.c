@@ -30,7 +30,7 @@ void sigint_handler(int sig) {
 void *blink_function(void *arg) {
     struct timespec request;
     request.tv_sec = 0;
-    request.tv_nsec = 1 / LED_FREQ * 1000000;
+    request.tv_nsec = 1e9 / LED_FREQ;
 
     params_t params = *((params_t *) arg);
     pthread_mutex_t mutex = params.mutex;
@@ -105,7 +105,7 @@ int main() {
         if (button_val == -1) {
             cleanup();
             return 1;
-        } else if (button_val) {
+        } else if (button_val == 0) {
             printf("Button pressed, toggling blinking...\n");
             pthread_mutex_lock(&mutex);
             blink = !blink;
