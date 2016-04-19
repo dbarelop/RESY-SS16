@@ -19,3 +19,8 @@
 | RFID | 20% | 20 | 100 |
 |Motorsteuerung | 20% | 10 | 50 |
 | Linux (geschätzt) | 10% | x | x |
+
+
+## Mitschrieb nach erster Vorstellung
+* Alle Sensordaten und Motorsteuerung getrennt von einer Main-Task
+* Datenflussdiagramm erstellen
