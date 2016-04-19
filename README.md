@@ -8,6 +8,7 @@
     *  Steuerung Motor
 * Der Notausbutton wird mit Interrupt umgesetzt
 * Als Scheduler wird EDF verwendet (Earliest Deadline First)
+* Informationen werden über shared-memory ausgetauscht.
 
 ## Rechnerkernaufteilung:
 
