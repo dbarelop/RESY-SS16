@@ -17,5 +17,3 @@
 | RFID | 20% | 20 | 100 |
 |Motorsteuerung | 20% | aperiodisch ||
 | Linux (geschätzt) | 10% | x | x |
-
-![Mit RR](https://burns.in.htwg-konstanz.de/labworks-RESY_SS16/resy_ss16_1/blob/develop/mit_RR.eps)
