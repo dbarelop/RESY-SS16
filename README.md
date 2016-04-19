@@ -8,6 +8,7 @@
     *  Steuerung Motor
 * Der Notausbutton wird mit Interrupt umgesetzt
 * Als Scheduler wird EDF verwendet (Earliest Deadline First)
+* Informationen werden über shared-memory ausgetauscht.
 
 ## Rechnerkernaufteilung:
 
@@ -16,5 +17,5 @@
 | Ultraschall | 20% | 50 | 250 |
 | LED's | 10% | 10 | 100 |
 | RFID | 20% | 20 | 100 |
-|Motorsteuerung | 20% | aperiodisch ||
+|Motorsteuerung | 20% | 20 | 100 |
 | Linux (geschätzt) | 10% | x | x |
