@@ -17,5 +17,5 @@
 | Ultraschall | 20% | 50 | 250 |
 | LED's | 10% | 10 | 100 |
 | RFID | 20% | 20 | 100 |
-|Motorsteuerung | 20% | 20 | 100 |
+|Motorsteuerung | 20% | 10 | 50 |
 | Linux (geschätzt) | 10% | x | x |
