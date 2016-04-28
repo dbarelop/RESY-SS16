@@ -6,9 +6,12 @@
     *  LED's
     *  RFID
     *  Steuerung Motor
+    * Logik
 * Der Notausbutton wird mit Interrupt umgesetzt
 * Als Scheduler wird EDF verwendet (Earliest Deadline First)
 * Informationen werden über shared-memory ausgetauscht.
+* Sensoren geben Informationen an Logiktask.
+* Logiktask wertet die Informationen aus und steuert dementsprechend den Motor.
 
 ## Rechnerkernaufteilung:
 
