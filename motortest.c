@@ -39,12 +39,12 @@ int main( int argc, char **argv, char **envp )
   write( fd_left, &left, sizeof(left) );
   write( fd_right, &right, sizeof(right) );
 
-while (1)
-{
-  sleeptime.tv_sec = 1000;
-  sleeptime.tv_nsec = 500000000;
-  clock_nanosleep( CLOCK_MONOTONIC,0,&sleeptime,NULL);
-}
+  while (1)
+  {
+    sleeptime.tv_sec = 1000;
+    sleeptime.tv_nsec = 500000000;
+    clock_nanosleep( CLOCK_MONOTONIC,0,&sleeptime,NULL);
+  }
 return 0;
 
 }
