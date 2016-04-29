@@ -1,0 +1,7 @@
+CC=gcc
+
+TARGET_TRACK=track
+SOURCE_TRACK=$(TARGET_TRACK)
+
+track:
+	$(CC) $(TARGET_TRACK) -o $(SOURCE_TRACK)
