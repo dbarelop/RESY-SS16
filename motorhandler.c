@@ -17,7 +17,7 @@ int main()
 {
   // ---------- Initializing Variables
   signal(SIGINT, motorbreakhandler);
-  fd_right = open("/dev/motor-left", O_WRONLY);
+  fd_left = open("/dev/motor-left", O_WRONLY);
   fd_right = open("/dev/motor-right", O_WRONLY);
   if (fd_left<0 || fd_right<0) {
     perror("open");
