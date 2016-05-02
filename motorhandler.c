@@ -54,7 +54,7 @@ int main()
     else{
       left = CMotor->valueleft;
       right = CMotor->valueright;
-	  updatemotors(CMotor->valueleft, CMotor->valueright);
+	  updatemotors(left, right);
 	  CMotor->changed = 0;
     }
   }
