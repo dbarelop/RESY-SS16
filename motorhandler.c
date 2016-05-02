@@ -33,8 +33,8 @@ int main()
   }
   CMotor = SMotor;
   CMotor->changed = 1;
-  CMotor->valueleft = 1;
-  CMotor->valueright = 1;
+  CMotor->valueleft = 0;
+  CMotor->valueright = 0;
   CMotor->priority = 99;
   CMotor->stop = 0;
   // ---------- Shared Memory Initialized
@@ -62,8 +62,8 @@ int main()
 // ------------ Function that changes the values of the motors
 void updatemotors(int left, int right)
 {
-  write( fd_left, &CMotor->valueleft, sizeof(CMotor->valueleft) );
-  write( fd_right, &CMotor->valueright, sizeof(CMotor->valueright) );
+  write( fd_left, &left, sizeof(left) );
+  write( fd_right, &right, sizeof(right) );
 }
 
 // ------------ handler for the stop signal
