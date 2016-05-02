@@ -19,6 +19,10 @@ int main()
   signal(SIGINT, motorbreakhandler);
   fd_right = open("/dev/motor-left", O_WRONLY);
   fd_right = open("/dev/motor-right", O_WRONLY);
+  if (fd_left<0 || fd_right<0) {
+    perror("open");
+    return -1;
+  }
   CMotor=(struct MotorControl*)malloc(sizeof(struct MotorControl));
   int right, left;
 
@@ -54,7 +58,7 @@ int main()
     else{
       left = CMotor->valueleft;
       right = CMotor->valueright;
-      printf("got event\n");
+      printf("got event, left: %d, right: %d\n", left, right);
 	  updatemotors(left, right);
 	  CMotor->changed = 0;
     }
