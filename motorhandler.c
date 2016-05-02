@@ -20,6 +20,7 @@ int main()
   fd_right = open("/dev/motor-left", O_WRONLY);
   fd_right = open("/dev/motor-right", O_WRONLY);
   CMotor=(struct MotorControl*)malloc(sizeof(struct MotorControl));
+  int right, left;
 
   // ---------- Initializing Shared Memory
   key = 9001;
@@ -51,6 +52,8 @@ int main()
       sleep(1);
     }
     else{
+      left = CMotor->valueleft;
+      right = CMotor->valueright;
 	  updatemotors(CMotor->valueleft, CMotor->valueright);
 	  CMotor->changed = 0;
     }
