@@ -17,8 +17,8 @@ int main()
 {
   // ---------- Initializing Variables
   signal(SIGINT, motorbreakhandler);
-  fd_right = open("/dev/motor-left", O_WRONLY);
-  fd_left = open("/dev/motor-right", O_WRONLY);
+  fd_left = open("/dev/motor-left", O_WRONLY);
+  fd_right = open("/dev/motor-right", O_WRONLY);
   if (fd_left<0 || fd_right<0) {
     perror("open");
     return -1;
@@ -56,11 +56,10 @@ int main()
       sleep(1);
     }
     else{
-      left = CMotor->valueleft;
-      right = CMotor->valueright;
-      printf("got event, left: %d, right: %d\n", left, right);
-	  updatemotors(left, right);
-	  CMotor->changed = 0;
+	left = CMotor->valueleft;
+	right = CMotor->valueright;
+	updatemotors(left, right);
+	CMotor->changed = 0;
     }
   }
 

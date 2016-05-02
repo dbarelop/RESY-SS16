@@ -15,10 +15,10 @@ static struct class *gpio_class;
 static struct device *motorl_dev, *motorr_dev;
 
 // ToDo: Hier muessen die verwendeten GPIOs eingetragen werden
-#define ML1   18
-#define ML2   15
-#define MR1   14
-#define MR2   4
+#define ML1   14
+#define ML2   4
+#define MR1   18
+#define MR2   15
 
 static int driver_open( struct inode *geraetedatei, struct file *instanz )
 {
