@@ -54,6 +54,7 @@ int main()
     else{
       left = CMotor->valueleft;
       right = CMotor->valueright;
+      print("got event\n");
 	  updatemotors(left, right);
 	  CMotor->changed = 0;
     }
