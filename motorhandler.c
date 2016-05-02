@@ -50,6 +50,10 @@ int main()
     {
       sleep(1);
     }
+    else{
+	  updatemotors(CMotor->valueleft, CMotor->valueright);
+	  CMotor->changed = 0;
+    }
   }
 
   return 0;
