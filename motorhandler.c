@@ -12,6 +12,7 @@
 key_t key;
 struct MotorControl *CMotor, *SMotor;
 int fd_left, fd_right,shmid;
+struct timespec sleeptime;
 
 int main()
 {
@@ -53,7 +54,9 @@ int main()
     }
     if(CMotor->changed == 0)
     {
-      sleep(1);
+      sleeptime.tv_nsec = 100000000;
+      clock_nanosleep( CLOCK_MONOTONIC,0,&sleeptime,NULL);
+
     }
     else{
 	left = CMotor->valueleft;
