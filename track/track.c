@@ -12,6 +12,7 @@
 
 int main() {
 	key_t key;
+	struct shmid_ds shmid_ds;
 	int leds, l_one, l_two, l_three, l_four;
 	int shmid;
 	int n = 4;
@@ -65,11 +66,13 @@ int main() {
 			l_four = 1;
 		else
 			l_four = 0;
-		
+		while (shmctl(shmid, SHM_LOCK, &shmid_ds) == -1) {
+		}
 		struct_led_status_local -> led_one = l_one;
 		struct_led_status_local -> led_two = l_two;
 		struct_led_status_local -> led_three = l_three;
 		struct_led_status_local -> led_four = l_four;
+		shmctl(shmid, SHM_UNLOCK, &shmid_ds);
 		sleeptime.tv_sec = 1;
 		clock_nanosleep( CLOCK_MONOTONIC, 0, &sleeptime, NULL);
 	}

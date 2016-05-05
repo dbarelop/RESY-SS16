@@ -4,11 +4,13 @@
 #include <sys/types.h>
 #include <sys/ipc.h>
 #include <sys/shm.h>
+#include <unistd.h>
 #include "motorhandler.h"
 #include "track.h"
 
 struct MotorControl *CMotor, *SMotor;
 struct led_status *c_track, *s_track;
+struct shmid_ds shmid_ds_track;
 int shmid, shmid_led;
 key_t key;
 
@@ -43,12 +45,64 @@ int main(int argc, char *argv[])
   }
   c_track = s_track;
 
-  if(argc > 1) {
+  while(argc > 1) {
+	int l_one, l_two, l_three, l_four;
 	printf("%d  %d  %d  %d\n",
 	 c_track -> led_one, c_track -> led_two, c_track -> led_three, c_track -> led_four);
-	return 0;
+	while (shmctl(shmid_led, SHM_LOCK, &shmid_ds_track) == -1) {
+	}
+	l_one = c_track -> led_one;
+	l_two = c_track -> led_two;
+	l_three = c_track -> led_three;
+	l_four = c_track -> led_four;
+	shmctl(shmid_led, SHM_UNLOCK, &shmid_ds_track);
+	
+	if(l_one && !l_two && !l_three && !l_four) {
+		CMotor->changed = 1;
+		CMotor->valueleft = 1;
+		CMotor->valueright = 0;
+		usleep(50);
+		CMotor->changed = 1;
+		CMotor->valueleft = 0;
+		CMotor->valueright = 0;
+	}
+	else if(l_one && l_two && !l_three && !l_four) {
+		CMotor->changed = 1;
+		CMotor->valueleft = 1;
+		CMotor->valueright = 0;
+		usleep(50);
+		CMotor->changed = 1;
+		CMotor->valueleft = 0;
+		CMotor->valueright = 0;
+	}
+	else if(!l_one && l_two && l_three && !l_four) {
+		CMotor->changed = 1;
+		CMotor->valueleft = 1;
+		CMotor->valueright = 1;
+		usleep(50);
+		CMotor->changed = 1;
+		CMotor->valueleft = 0;
+		CMotor->valueright = 0;
+	}
+	else if(!l_one && !l_two && l_three && l_four) {
+		CMotor->changed = 1;
+		CMotor->valueleft = 0;
+		CMotor->valueright = 1;
+		usleep(50);
+		CMotor->changed = 1;
+		CMotor->valueleft = 0;
+		CMotor->valueright = 0;
+	}
+	else if(!l_one && !l_two && !l_three && l_four) {
+		CMotor->changed = 1;
+		CMotor->valueleft = 0;
+		CMotor->valueright = 1;
+		usleep(50);
+		CMotor->changed = 1;
+		CMotor->valueleft = 0;
+		CMotor->valueright = 0;
+	}
   }
-
   while(1)
   {
 	  scanf("%c", &a);
