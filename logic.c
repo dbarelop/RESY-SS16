@@ -4,7 +4,6 @@
 #include <sys/types.h>
 #include <sys/ipc.h>
 #include <sys/shm.h>
-#include <unistd.h>
 #include "motorhandler.h"
 #include "track.h"
 
@@ -61,7 +60,7 @@ int main(int argc, char *argv[])
 		CMotor->changed = 1;
 		CMotor->valueleft = 1;
 		CMotor->valueright = 0;
-		usleep(50);
+		nanosleep(50);
 		CMotor->changed = 1;
 		CMotor->valueleft = 0;
 		CMotor->valueright = 0;
@@ -70,7 +69,7 @@ int main(int argc, char *argv[])
 		CMotor->changed = 1;
 		CMotor->valueleft = 1;
 		CMotor->valueright = 0;
-		usleep(50);
+		nanosleep(50);
 		CMotor->changed = 1;
 		CMotor->valueleft = 0;
 		CMotor->valueright = 0;
@@ -79,7 +78,7 @@ int main(int argc, char *argv[])
 		CMotor->changed = 1;
 		CMotor->valueleft = 1;
 		CMotor->valueright = 1;
-		usleep(50);
+		nanosleep(50);
 		CMotor->changed = 1;
 		CMotor->valueleft = 0;
 		CMotor->valueright = 0;
@@ -88,7 +87,7 @@ int main(int argc, char *argv[])
 		CMotor->changed = 1;
 		CMotor->valueleft = 0;
 		CMotor->valueright = 1;
-		usleep(50);
+		nanosleep(50);
 		CMotor->changed = 1;
 		CMotor->valueleft = 0;
 		CMotor->valueright = 0;
@@ -97,7 +96,7 @@ int main(int argc, char *argv[])
 		CMotor->changed = 1;
 		CMotor->valueleft = 0;
 		CMotor->valueright = 1;
-		usleep(50);
+		nanosleep(50);
 		CMotor->changed = 1;
 		CMotor->valueleft = 0;
 		CMotor->valueright = 0;
