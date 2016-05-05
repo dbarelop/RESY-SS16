@@ -46,6 +46,7 @@ int main(int argc, char *argv[])
 
   while(argc > 1) {
 	int l_one, l_two, l_three, l_four;
+	struct timespec sleep;
 	printf("%d  %d  %d  %d\n",
 	 c_track -> led_one, c_track -> led_two, c_track -> led_three, c_track -> led_four);
 	while (shmctl(shmid_led, SHM_LOCK, &shmid_ds_track) == -1) {
@@ -54,13 +55,14 @@ int main(int argc, char *argv[])
 	l_two = c_track -> led_two;
 	l_three = c_track -> led_three;
 	l_four = c_track -> led_four;
+	sleep.tv_nsec = 100;
 	shmctl(shmid_led, SHM_UNLOCK, &shmid_ds_track);
 	
 	if(l_one && !l_two && !l_three && !l_four) {
 		CMotor->changed = 1;
 		CMotor->valueleft = 1;
 		CMotor->valueright = 0;
-		nanosleep(50);
+		nanosleep(&sleep, NULL);
 		CMotor->changed = 1;
 		CMotor->valueleft = 0;
 		CMotor->valueright = 0;
@@ -69,7 +71,7 @@ int main(int argc, char *argv[])
 		CMotor->changed = 1;
 		CMotor->valueleft = 1;
 		CMotor->valueright = 0;
-		nanosleep(50);
+		nanosleep(&sleep, NULL);
 		CMotor->changed = 1;
 		CMotor->valueleft = 0;
 		CMotor->valueright = 0;
@@ -78,7 +80,7 @@ int main(int argc, char *argv[])
 		CMotor->changed = 1;
 		CMotor->valueleft = 1;
 		CMotor->valueright = 1;
-		nanosleep(50);
+		nanosleep(&sleep, NULL);
 		CMotor->changed = 1;
 		CMotor->valueleft = 0;
 		CMotor->valueright = 0;
@@ -87,7 +89,7 @@ int main(int argc, char *argv[])
 		CMotor->changed = 1;
 		CMotor->valueleft = 0;
 		CMotor->valueright = 1;
-		nanosleep(50);
+		nanosleep(&sleep, NULL);
 		CMotor->changed = 1;
 		CMotor->valueleft = 0;
 		CMotor->valueright = 0;
@@ -96,7 +98,7 @@ int main(int argc, char *argv[])
 		CMotor->changed = 1;
 		CMotor->valueleft = 0;
 		CMotor->valueright = 1;
-		nanosleep(50);
+		nanosleep(&sleep, NULL);
 		CMotor->changed = 1;
 		CMotor->valueleft = 0;
 		CMotor->valueright = 0;
