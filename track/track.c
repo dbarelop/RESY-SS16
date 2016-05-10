@@ -17,7 +17,7 @@ int main() {
 	int shmid;
 	int n = 4;
 	struct timespec sleeptime;
-	unsigned int buf;
+	int buf;
 	struct led_status *struct_led_status_shared;
 	struct led_status *struct_led_status_local;
 	
@@ -73,7 +73,8 @@ int main() {
 		struct_led_status_local -> led_three = l_three;
 		struct_led_status_local -> led_four = l_four;
 		shmctl(shmid, SHM_UNLOCK, &shmid_ds);
-		sleeptime.tv_sec = 1;
+		sleeptime.tv_sec = 0;
+		sleeptime.tv_nsec = 100000000;
 		clock_nanosleep( CLOCK_MONOTONIC, 0, &sleeptime, NULL);
 	}
 	return 0;

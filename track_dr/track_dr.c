@@ -14,10 +14,10 @@ static struct class *gpio_class;
 static struct device *track_dev;
 
 
-#define OUT1  11
-#define OUT2  25
-#define OUT3  8
-#define OUT4  7
+#define OUT1  17
+#define OUT2  27
+#define OUT3  22
+#define OUT4  24
 
 static int driver_open( struct inode *geraetedatei, struct file *instanz )
 {
@@ -113,16 +113,11 @@ static ssize_t driver_read( struct file *instanz, char __user *user,
 	o_3 = OUT3;
 	o_4 = OUT4;
 
-	
-
-	printk( "driver_read\n" );
-
 	// ECHO_PIN einlesen
 	value = gpio_get_value( OUT1 );
 	value = value + gpio_get_value( OUT2 )*10;
 	value = value + gpio_get_value( OUT3 )*100;
 	value = value + gpio_get_value( OUT4 )*1000;
-	printk("%d\n",value);
 	// Echopin zur Applikation kopieren
 	to_copy = min( count, sizeof(value) );
 	not_copied=copy_to_user( user, &value, to_copy );
