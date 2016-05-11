@@ -12,7 +12,7 @@
 int ultrasonic_fd;
 
 void sigint_handler(int sig) {
-    printf("Detected CTROL+C, cleaning up and exiting...\n");
+    printf("Detected CTRL+C, cleaning up and exiting...\n");
     close(ultrasonic_fd);
     exit(0);
 }
@@ -28,7 +28,6 @@ int main(int argc, char **argv) {
     signal(SIGINT, sigint_handler);
     sleeptime.tv_sec = 0;
     sleeptime.tv_nsec = SLEEP_TIME_NS;
-    ultrasonic_fd = open("/dev/ultrasonic", O_RDONLY);
 
     key = 9003;
     if ((shmid = shmget(key, sizeof(struct ultrasonic_distance), IPC_CREAT | 0666)) < 0) {
@@ -41,7 +40,9 @@ int main(int argc, char **argv) {
     }
     
     while (1) {
+        ultrasonic_fd = open("/dev/ultrasonic", O_RDONLY);
         read(ultrasonic_fd, &buf, sizeof(buf));
+        close(ultrasonic_fd);
         printf("%llu ns\n", buf);
         while (shmctl(shmid, SHM_LOCK, &shmid_ds) == -1);
         ultrasonic_distance_shared->distance = buf;

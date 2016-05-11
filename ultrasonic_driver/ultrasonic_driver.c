@@ -21,6 +21,8 @@ static dev_t gpio_dev_number;
 static struct cdev *driver_object;
 static struct class *gpio_class;
 static struct device *ultrasonic_dev;
+static ktime_t start, end;
+static int state;
 
 #ifdef INTERRUPT
 static DEFINE_MUTEX(read_lock);
@@ -33,6 +35,7 @@ static DEFINE_MUTEX(read_lock);
 #define GPIO_ECHO 2
 
 static int driver_open(struct inode *device_file, struct file *instance) {
+    printk("driver_open called\n");
     // Request control of GPIO pins
     if (gpio_request(GPIO_TRIGGER, "rpi_gpio_ultrasonic_trigger")) {
         printk("failed requesting control for trigger GPIO\n");
@@ -43,7 +46,7 @@ static int driver_open(struct inode *device_file, struct file *instance) {
         return -EIO;
     }
     // Set the direction of the GPIO pins
-    if (gpio_direction_output(GPIO_TRIGGER, 0)) {
+    if (gpio_direction_output(GPIO_TRIGGER, LOW)) {
         printk("failed setting output direction for trigger GPIO\n");
         return -EIO;
     }
@@ -51,8 +54,7 @@ static int driver_open(struct inode *device_file, struct file *instance) {
         printk("failed setting input direction for echo GPIO\n");
         return -EIO;
     }
-    // Make sure the trigger pin is set low and wait for it to settle
-    gpio_set_value(GPIO_TRIGGER, LOW);
+    state = LOW;
     printk("GPIO pins (%d and %d) succesfully configured\n", GPIO_TRIGGER, GPIO_ECHO);
 
     return 0;
@@ -68,14 +70,21 @@ static int driver_close(struct inode *device_file, struct file *instance) {
 
 #ifdef INTERRUPT
 static irq_handler_t irq_read_echo_handler(unsigned int irq, void *dev_id, struct pt_regs *regs) {
-    free_irq(irq, dev_id);
+    state = !state;
+    if (state == HIGH) {
+        start = ktime_get();
+        printk("rising edge detected for ultrasonic sensor's ECHO line (read_lock = %d)\n", atomic_read(&read_lock.count));
+    } else if (state == LOW) {
+        end = ktime_get();
+        printk("falling edge detected for ultrasonic sensor's ECHO line (read_lock = %d)\n", atomic_read(&read_lock.count));
+    }
     mutex_unlock(&read_lock);
     return (irq_handler_t) IRQ_HANDLED;
 }
 #endif
 
 static ssize_t driver_read(struct file *instance, char __user *user, size_t count, loff_t *offset) {
-    ktime_t start, end, delta;
+    ktime_t delta;
     u64 travel_time;
     #ifdef INTERRUPT
     int irq_number, irq_request_result;
@@ -86,33 +95,34 @@ static ssize_t driver_read(struct file *instance, char __user *user, size_t coun
     gpio_set_value(GPIO_TRIGGER, HIGH);
     udelay(20);
     gpio_set_value(GPIO_TRIGGER, LOW);
+    printk("pulse sent\n");
 
     // Wait for echo to start
     #ifdef INTERRUPT
-    irq_request_result = request_irq(irq_number, (irq_handler_t) irq_read_echo_handler, IRQF_TRIGGER_RISING, "ultrasonic_echo_handler", NULL);
+    irq_request_result = request_irq(irq_number, (irq_handler_t) irq_read_echo_handler, (IRQF_TRIGGER_RISING | IRQF_TRIGGER_FALLING), "ultrasonic_echo_handler", NULL);
+    printk("(read_lock = %d)\n", atomic_read(&read_lock.count));
     mutex_lock(&read_lock);
-    printk("rising edge detected for ultrasonic sensor's ECHO line\n");
-    //free_irq(irq_number, NULL);
     #else
     while (gpio_get_value(GPIO_ECHO) == LOW);
+    start = ktime_get();
+    printk("rising edge detected for ultrasonic sensor's ECHO line\n");
     #endif
 
     // Wait for echo to end
-    start = ktime_get();
     #ifdef INTERRUPT
-    irq_request_result = request_irq(irq_number, (irq_handler_t) irq_read_echo_handler, IRQF_TRIGGER_FALLING, "ultrasonic_echo_handler", NULL);
+    printk("(read_lock = %d)\n", atomic_read(&read_lock.count));
     mutex_lock(&read_lock);
-    printk("falling edge detected for ultrasonic sensor's ECHO line\n");
-    //free_irq(irq_number, NULL);
+    free_irq(irq_number, NULL);
     #else
     while (gpio_get_value(GPIO_ECHO) == HIGH);
-    #endif
     end = ktime_get();
+    printk("falling edge detected for ultrasonic sensor's ECHO line\n");
+    #endif
 
     // Calculate elapsed time
     delta = ktime_sub(end, start);
     travel_time = ktime_to_ns(delta);
-    printk("travelTime = %llu ns\n", travel_time);
+    printk("ultrasonic sensor's travel_time = %llu ns\n", travel_time);
 
     // Copy result into user space
     return copy_to_user(user, &travel_time, sizeof(travel_time));
@@ -155,6 +165,7 @@ static int __init mod_init(void) {
         return -EIO;
     }
     ultrasonic_dev = device_create(gpio_class, NULL, gpio_dev_number, NULL, "%s", "ultrasonic");
+    mutex_lock(&read_lock);
     dev_info(ultrasonic_dev, "mod_init completed succesfully");
 
     return 0;
