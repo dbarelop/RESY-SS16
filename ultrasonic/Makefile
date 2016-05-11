@@ -1,13 +1,11 @@
-ifneq ($(KERNELRELEASE),)
-obj-m := ultrasonic_driver.o
+CC=gcc
 
-else
-KDIR := /lib/modules/$(shell uname -r)/build
-PWD := $(shell pwd)
+TARGET=ultrasonic_handler
+SOURCE=$(TARGET).c
+HEADER=$(TARGET).h
 
-default:
-	$(MAKE) -C $(KDIR) M=$(PWD) modules
-endif
+all:
+	$(CC) $(SOURCE) $(HEADER) -o $(TARGET)
 
 clean:
-	rm -rf *.ko *.o *.mod.c modules.order Module.symvers .tmp_versions .*.cmd *.dwo ultrasonic_driver
+	rm $(TARGET)
