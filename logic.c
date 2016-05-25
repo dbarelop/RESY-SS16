@@ -1,4 +1,3 @@
-#include <stdlib.h>
 #include <signal.h>
 #include <stdio.h>
 #include <time.h>
@@ -57,129 +56,141 @@ int main(int argc, char *argv[])
   c_track = s_track;
 
   while(argc > 1) {
-	int l_one, l_two, l_three, l_four;
-	struct timespec sleep, sleep2;
-	if( i == 1000) {
-		i = 1;
-		buffer[0] = 9999;
-	}
-	buffer[i] = c_track -> led_one + (c_track -> led_two * 10) + (c_track -> led_three * 100) + (c_track -> led_four * 1000);
-	i++;
-	while (shmctl(shmid_led, SHM_LOCK, &shmid_ds_track) == -1) {
-	}
-	l_one = c_track -> led_one;
-	l_two = c_track -> led_two;
-	l_three = c_track -> led_three;
-	l_four = c_track -> led_four;
-	shmctl(shmid_led, SHM_UNLOCK, &shmid_ds_track);
-	sleep.tv_sec = 0;
-	sleep.tv_nsec = 20000000;
-	sleep2.tv_sec = 0;
-	sleep2.tv_nsec = 20000000;
+        int l_one, l_two, l_three, l_four;
+        struct timespec sleep;
+        if( i == 1000) {
+                i = 1;
+                buffer[0] = 9999;
+        }
+        buffer[i] = c_track -> led_one + (c_track -> led_two * 10) + (c_track -> led_three * 100) + (c_track ->$
+        i++;
+        while (shmctl(shmid_led, SHM_LOCK, &shmid_ds_track) == -1) {
+        }
+        l_one = c_track -> led_one;
+        l_two = c_track -> led_two;
+        l_three = c_track -> led_three;
+        l_four = c_track -> led_four;
+        shmctl(shmid_led, SHM_UNLOCK, &shmid_ds_track);
+        sleep.tv_sec = 0;
+        sleep.tv_nsec = 15000000;
+        CMotor->speed = 20;
 
 
-	if(l_one && !l_two && !l_three && !l_four) {
-		change_direction(1, 0, &sleep, &sleep2);
-	}
-	else if(l_one && l_two && !l_three && !l_four) {
-		change_direction(1, 0, &sleep, &sleep2);
-	}
-	else if(!l_one && l_two && l_three && !l_four) {
-		change_direction(1, 1, &sleep, &sleep2);
-	}
-	else if(!l_one && !l_two && l_three && !l_four) {
-		change_direction(1, 1, &sleep, &sleep2);
-	}
-	else if(!l_one && l_two && !l_three && !l_four) {
-		change_direction(1, 1, &sleep, &sleep2);
-	}
-	else if(!l_one && !l_two && l_three && l_four) {
-		change_direction(0, 1, &sleep, &sleep2);
-	}
-	else if(!l_one && !l_two && !l_three && l_four) {
-		change_direction(0, 1, &sleep, &sleep2);
-	}
-	else {
-		CMotor->changed = 1;
-		CMotor->valueleft = 1;
-		CMotor->valueright = 1;
-		nanosleep(&sleep, NULL);
-		CMotor->changed = 1;
-		CMotor->valueleft = 0;
-		CMotor->valueright = 0;
-		nanosleep(&sleep, NULL);
+        if(l_one && !l_two && !l_three && !l_four) {
+                change_direction(1, 0, &sleep);
+        }
+        else if(l_one && l_two && !l_three && !l_four) {
+                change_direction(1, 0, &sleep);
+        }
+        else if(!l_one && l_two && l_three && !l_four) {
+                change_direction(1, 1, &sleep);
+        }
+        else if(!l_one && !l_two && l_three && !l_four) {
+                change_direction(1, 1, &sleep);
+        }
+        else if(!l_one && l_two && !l_three && !l_four) {
+                change_direction(1, 1, &sleep);
+        }
+        else if(!l_one && !l_two && l_three && l_four) {
+                change_direction(0, 1, &sleep);
+        }
+        else if(!l_one && !l_two && !l_three && l_four) {
+                change_direction(0, 1, &sleep);
+        }
+        else {
+                CMotor->changed = 1;
+                CMotor->valueleft = 1;
+                CMotor->valueright = 1;
+                nanosleep(&sleep, NULL);
+                CMotor->changed = 1;
+                CMotor->valueleft = 0;
+                CMotor->valueright = 0;
+                nanosleep(&sleep, NULL);
 
-	}
+        }
   }
   while(1)
   {
-	  start = clock();
-	  scanf("%c", &a);
-	  printf("%c\n", a);
-	  if(a == 'l')
-	  {
-		  CMotor->changed = 1;
-		  CMotor->valueleft=1;
-		  CMotor->valueright=0;
-	  }
-	  if(a == 'r')
-	  {
-		  CMotor->changed = 1;
-		  CMotor->valueleft=0;
-		  CMotor->valueright=1;
-	  }
-	  if(a == 'f')
-	  {
-		  CMotor->changed = 1;
-		  CMotor->valueleft=1;
-		  CMotor->valueright=1;
-	  }
-	  if(a == 'b')
-	  {
-		  CMotor->changed = 1;
-		  CMotor->valueleft=-1;
-		  CMotor->valueright=-1;
-	  }
-	  if(a == 's')
-	  {
-		  CMotor->changed = 1;
-		  CMotor->valueleft=0;
-		  CMotor->valueright=0;
-	  }
-	  timingBuffer[counter] = clock() - start;
-	  timingChar[counter] = a;
-	  counter++;
-	  counter = counter % 100;
+          start = clock();
+          scanf("%c", &a);
+          printf("%c\n", a);
+          if(a == 'l')
+          {
+                  CMotor->changed = 1;
+                  CMotor->valueleft=1;
+                  CMotor->valueright=0;
+          }
+          if(a == 'r')
+          {
+                  CMotor->changed = 1;
+                  CMotor->valueleft=0;
+                  CMotor->valueright=1;
+          }
+          if(a == 'f')
+          {
+                  CMotor->changed = 1;
+                  CMotor->valueleft=1;
+                  CMotor->valueright=1;
+          }
+          if(a == 'b')
+          {
+                  CMotor->changed = 1;
+                  CMotor->valueleft=-1;
+                  CMotor->valueright=-1;
+          }
+          if(a == 's')
+          {
+                  CMotor->changed = 1;
+                  CMotor->valueleft=0;
+                  CMotor->valueright=0;
+          }
+          if(a == 'z')
+          {
+                  CMotor->changed = 1;
+                  CMotor->speed = (CMotor->speed - 10) % 110;
+          }
+          if(a == 't')
+          {
+                  CMotor->changed = 1;
+                  CMotor->speed = CMotor->speed + 10;
+          }
+          if(a == 'u')
+          {
+                  CMotor->changed = 1;
+                  CMotor->speed = 100;
+          }
+
+          timingBuffer[counter] = clock() - start;
+          timingChar[counter] = a;
+          counter++;
+          counter = counter % 100;
   }
 }
 
 void close_handler(int sugnum) {
-	FILE *fp;
-	fp = fopen("./logic-buffer.log", "w+");
-	CMotor->changed = 1;
-	CMotor->valueleft=0;
-	CMotor->valueright=0;
-	fprintf(fp, "TimingLogic - buffer\n");
-	for(counter=0; counter < 1000; counter++)
-	{
-		fprintf(fp, "%d.\t%d\n", counter, buffer[counter]);
-	}
-	fp = fopen("./logic-timingBuffer.log", "w+");
-	fprintf(fp, "TimingLogic - timingBuffer & timingChar\n");
-	for(counter=0; counter < 100; counter++)
-	{
-		fprintf(fp, "%d.\t%d\t%c\n", counter, timingBuffer[counter], timingChar[counter]);
-	}
-	exit(1);
+        FILE *fp;
+        fp = fopen("./logic-buffer.log", "w+");
+        CMotor->changed = 1;
+        CMotor->valueleft=0;
+        CMotor->valueright=0;
+        fprintf(fp, "TimingLogic - buffer\n");
+        for(counter=0; counter < 1000; counter++)
+        {
+                fprintf(fp, "%d.\t%d\n", counter, buffer[counter]);
+        }
+        fp = fopen("./logic-timingBuffer.log", "w+");
+        fprintf(fp, "TimingLogic - timingBuffer & timingChar\n");
+        for(counter=0; counter < 100; counter++)
+        {
+                fprintf(fp, "%d.\t%d\t%c\n", counter, timingBuffer[counter], timingChar[counter]);
+        }
+        exit(1);
 }
 
-void change_direction(int left, int right, struct timespec *sleep, struct timespec *sleep2) {
-	CMotor->changed = 1;
-	CMotor->valueleft = left;
-	CMotor->valueright = right;
-	nanosleep(sleep, NULL);
-	CMotor->changed = 1;
-	CMotor->valueleft = 0;
-	CMotor->valueright = 0;
-	nanosleep(sleep2, NULL);
+void change_direction(int left, int right, struct timespec *sleep) {
+        CMotor->changed = 1;
+        CMotor->valueleft = left;
+        CMotor->valueright = right;
+        nanosleep(sleep, NULL);
 }
+
