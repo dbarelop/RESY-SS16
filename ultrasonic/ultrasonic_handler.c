@@ -7,6 +7,7 @@
 #include <unistd.h>
 #include "ultrasonic_handler.h"
 
+#define SOUND_SPEED 34300          // 343 m/s, in cm
 #define SLEEP_TIME_NS 250e6
 
 int ultrasonic_fd;
@@ -20,8 +21,9 @@ void sigint_handler(int sig) {
 int main(int argc, char **argv) {
     key_t key;
     struct shmid_ds shmid_ds;
-    int distance, shmid;
+    int shmid;
     unsigned long long buf;
+    float rtt_s, dist;
     struct timespec sleeptime;
     struct ultrasonic_distance *ultrasonic_distance_shared;
 
@@ -38,12 +40,17 @@ int main(int argc, char **argv) {
         perror("shmat");
         exit(1);
     }
-    
+
     while (1) {
         ultrasonic_fd = open("/dev/ultrasonic", O_RDONLY);
         read(ultrasonic_fd, &buf, sizeof(buf));
         close(ultrasonic_fd);
-        printf("%llu ns\n", buf);
+
+        rtt_s = (float) buf / 1000000000.0;
+        // d = v * t / 2
+        dist = SOUND_SPEED * rtt_s / 2.0;
+        printf("%f cm (%llu ns)\n", dist, buf);
+        
         while (shmctl(shmid, SHM_LOCK, &shmid_ds) == -1);
         ultrasonic_distance_shared->distance = buf;
         shmctl(shmid, SHM_UNLOCK, &shmid_ds);

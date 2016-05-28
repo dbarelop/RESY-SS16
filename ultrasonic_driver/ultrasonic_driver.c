@@ -112,8 +112,9 @@ static ssize_t driver_read(struct file *instance, char __user *user, size_t coun
     printk("(read_lock = %d)\n", atomic_read(&read_lock.count));
     mutex_lock(&read_lock);
     #else
-    while (gpio_get_value(GPIO_ECHO) == LOW);
-    start = ktime_get();
+    while (gpio_get_value(GPIO_ECHO) == LOW) {
+        start = ktime_get();
+    }
     printk("rising edge detected for ultrasonic sensor's ECHO line\n");
     #endif
 
@@ -123,8 +124,9 @@ static ssize_t driver_read(struct file *instance, char __user *user, size_t coun
     mutex_lock(&read_lock);
     free_irq(irq_number, NULL);
     #else
-    while (gpio_get_value(GPIO_ECHO) == HIGH);
-    end = ktime_get();
+    while (gpio_get_value(GPIO_ECHO) == HIGH) {
+        end = ktime_get();
+    }
     printk("falling edge detected for ultrasonic sensor's ECHO line\n");
     #endif
 
