@@ -10,7 +10,8 @@
 #include <linux/timekeeping.h>
 #include <linux/slab.h>
 
-#define INTERRUPT
+//#define INTERRUPT
+// FIXME: when using interrupt-driven I/O the driver eventually reaches a deadlock state
 
 #ifdef INTERRUPT
 #include <linux/interrupt.h>
@@ -38,12 +39,20 @@ static int driver_open(struct inode *device_file, struct file *instance) {
     printk("driver_open called\n");
     // Request control of GPIO pins
     if (gpio_request(GPIO_TRIGGER, "rpi_gpio_ultrasonic_trigger")) {
-        printk("failed requesting control for trigger GPIO\n");
-        return -EIO;
+        // Try to free the GPIO pin
+        gpio_free(GPIO_TRIGGER);
+        if (gpio_request(GPIO_TRIGGER, "rpi_gpio_ultrasonic_trigger")) {
+            printk("failed requesting control for trigger GPIO\n");
+            return -EIO;
+        }
     }
     if (gpio_request(GPIO_ECHO, "rpi_gpio_ultrasonic_echo")) {
-        printk("failed requesting control for echo GPIO\n");
-        return -EIO;
+        // Try to free the GPIO pin
+        gpio_free(GPIO_ECHO);
+        if (gpio_request(GPIO_ECHO, "rpi_gpio_ultrasonic_echo")) {
+            printk("failed requesting control for echo GPIO\n");
+            return -EIO;
+        }
     }
     // Set the direction of the GPIO pins
     if (gpio_direction_output(GPIO_TRIGGER, LOW)) {
@@ -165,7 +174,10 @@ static int __init mod_init(void) {
         return -EIO;
     }
     ultrasonic_dev = device_create(gpio_class, NULL, gpio_dev_number, NULL, "%s", "ultrasonic");
+    #ifdef INTERRUPT
+    // Set read_lock to 0
     mutex_lock(&read_lock);
+    #endif
     dev_info(ultrasonic_dev, "mod_init completed succesfully");
 
     return 0;
