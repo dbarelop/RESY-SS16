@@ -128,7 +128,6 @@ static ssize_t driver_write( struct file *instanz, const char __user *user,
 	}
 	return to_copy-not_copied;
 }
-
 static struct file_operations fops = {
 	.owner= THIS_MODULE,
 	.read= driver_read,
@@ -166,7 +165,6 @@ free_device_number:
 	unregister_chrdev_region( gpio_dev_number, 2 );
 	return -EIO;
 }
-
 static void __exit mod_exit( void )
 {
 	dev_info(motorl_dev, "mod_exit");
@@ -185,5 +183,4 @@ module_exit( mod_exit );
 
 /* Metainformation */
 MODULE_LICENSE("GPL");
-
 
