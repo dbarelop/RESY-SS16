@@ -98,6 +98,8 @@ static ssize_t driver_read(struct file *instance, char __user *user, size_t coun
     #ifdef INTERRUPT
     int irq_number, irq_request_result;
     irq_number = gpio_to_irq(GPIO_ECHO);
+    #else
+    unsigned int timeout;
     #endif
 
     // Send trigger pulse
@@ -112,10 +114,15 @@ static ssize_t driver_read(struct file *instance, char __user *user, size_t coun
     printk("(read_lock = %d)\n", atomic_read(&read_lock.count));
     mutex_lock(&read_lock);
     #else
-    while (gpio_get_value(GPIO_ECHO) == LOW) {
+    timeout = 65535;
+    while (gpio_get_value(GPIO_ECHO) == LOW && --timeout != 0) {
         start = ktime_get();
     }
-    printk("rising edge detected for ultrasonic sensor's ECHO line\n");
+    if (timeout == 0) {
+        printk("timeout detecting rising edge for ultrasonic sensor's ECHO!\n");
+        return -EIO;
+    }
+    printk("rising edge detected for ultrasonic sensor's ECHO line (t/o = %d)\n", timeout);
     #endif
 
     // Wait for echo to end
@@ -124,10 +131,15 @@ static ssize_t driver_read(struct file *instance, char __user *user, size_t coun
     mutex_lock(&read_lock);
     free_irq(irq_number, NULL);
     #else
-    while (gpio_get_value(GPIO_ECHO) == HIGH) {
+    timeout = 65535;
+    while (gpio_get_value(GPIO_ECHO) == HIGH && --timeout != 0) {
         end = ktime_get();
     }
-    printk("falling edge detected for ultrasonic sensor's ECHO line\n");
+    if (timeout == 0) {
+        printk("timeout detecting falling edge for ultrasonic sensor's ECHO!\n");
+        return -EIO;
+    }
+    printk("falling edge detected for ultrasonic sensor's ECHO line (t/o = %d)\n", timeout);
     #endif
 
     // Calculate elapsed time
