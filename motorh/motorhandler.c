@@ -14,8 +14,15 @@ struct MotorControl *CMotor, *SMotor;
 int fd_left, fd_right, shmid;
 struct timespec sleeptime, pwmtime;
 clock_t start, diff;
-int timingBuffer[100], counter=0, speed;
-char timingChar[100];
+int timingBuffer[101], counter=0, speed;
+char timingChar[101];
+
+// ------------ Function that changes the values of the motors
+void updatemotors(int left, int right)
+{
+  write( fd_left, &left, sizeof(left) );
+  write( fd_right, &right, sizeof(right) );
+}
 
 int main()
 {
@@ -115,6 +122,11 @@ int main()
            timingChar[counter] = 'f';
         else timingChar[counter] = 'x';
       }
+      if(timingBuffer[counter] > timingBuffer[100])
+      {
+	timingBuffer[100] = timingBuffer[counter];
+	timingChar[100] = timingChar[counter];
+      }
       counter++;
       counter = counter % 100;
     }
@@ -122,12 +134,7 @@ int main()
 
   return 0;
 }
-// ------------ Function that changes the values of the motors
-void updatemotors(int left, int right)
-{
-  write( fd_left, &left, sizeof(left) );
-  write( fd_right, &right, sizeof(right) );
-}
+
 
 // ------------ handler for the stop signal
 void motorbreakhandler(int signum)
@@ -137,7 +144,7 @@ void motorbreakhandler(int signum)
   updatemotors(0, 0);
   timingBuffer[counter] = clock()-start;
   timingChar[counter] = 'R';
-  for(counter = 0; counter < 100; counter++)
+  for(counter = 0; counter < 101; counter++)
   {
     fprintf(fp, "%d\t%c\n", timingBuffer[counter], timingChar[counter]);
     //write to file
