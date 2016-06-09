@@ -1,0 +1,1 @@
+cmd_/home/pi/resy_ss16_1/motor/motor.ko := ld -EL -r  -T ./scripts/module-common.lds --build-id  -o /home/pi/resy_ss16_1/motor/motor.ko /home/pi/resy_ss16_1/motor/motor.o /home/pi/resy_ss16_1/motor/motor.mod.o

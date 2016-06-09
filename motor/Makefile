@@ -1,5 +1,3 @@
-
-
 ifneq ($(KERNELRELEASE),)
 obj-m	:= motor.o
 
@@ -16,5 +14,4 @@ clean:
 	rm -rf modules.order Module.symvers
 	rm -rf .tmp_versions .*.cmd *.dwo .*.dwo
 	rm -f motor
-
 
